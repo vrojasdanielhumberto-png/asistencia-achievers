@@ -136,6 +136,7 @@
       Publicar en Instagram
     </button>
     <a class="btn claro" href="https://www.instagram.com/achieverslab.col/">Ir a @achieverslab.col</a>
+    <button class="cambiar" id="otraPersona" type="button">Registrar a otra persona en este celular</button>
   </section>
 
   <footer>Achievers Lab · empresa social y tecnológica fundada en 2024</footer>
@@ -257,6 +258,11 @@ $('bSolo').addEventListener('click', async () => {
   $('bSolo').disabled = true; $('sFoto').textContent = 'Marcando tu asistencia…';
   try { terminar(await marcar(false)); } catch (e) { subida = null; $('sFoto').textContent = 'No se pudo subir la foto. Revisa tu internet y vuelve a intentarlo.'; }
   $('bSolo').disabled = false;
+});
+
+$('otraPersona').addEventListener('click', () => {
+  try { ['id', 'nombre', 'listo'].forEach(k => localStorage.removeItem('ld_' + k)); } catch (e) {}
+  location.reload();
 });
 
 // Si vuelve a abrir el link
