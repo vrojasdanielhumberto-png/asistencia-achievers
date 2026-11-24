@@ -120,7 +120,9 @@
         Publicar en Instagram
       </button>
       <button class="btn claro" id="bSolo" type="button">Solo marcar mi asistencia</button>
-      <div class="tips">En tu historia o post etiqueta a <b>@achieverslab.col</b>. El texto ya queda copiado: solo pégalo.</div>
+      <button class="cambiar" id="bGuardar" type="button">Guardar mi foto con el marco</button>
+      <div class="tips">Al tocar <b>Publicar en Instagram</b> se abre la cámara de historias de Instagram: súbela y etiqueta a <b>@achieverslab.col</b>. Si quieres usar la foto con el marco, primero toca «Guardar mi foto con el marco».</div>
+      <div class="tips oculto" id="tipIos">En iPhone: mantén presionada la foto de arriba y toca <b>Guardar en Fotos</b>.</div>
     </div>
     <div class="estado" id="sFoto"></div>
   </section>
@@ -148,8 +150,21 @@ const SUPABASE_KEY = 'sb_publishable_CLYuajCg_s7EcEQDBkKyNQ__j2Wg_t3';
 const TEXTO = 'The Last Dance con @achieverslab.col en Rancho Aparte 💃🕺 #TheLastDance #AchieversLab';
 const H = { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY };
 const $ = id => document.getElementById(id);
-const guardar = (k, v) => { try { localStorage.setItem('ld_' + k, v); } catch (e) {} };
-const leer = k => { try { return localStorage.getItem('ld_' + k); } catch (e) { return null; } };
+const guardar = (k, v) => { try { localStorage.setItem('ld2_' + k, v); } catch (e) {} };
+const leer = k => { try { return localStorage.getItem('ld2_' + k); } catch (e) { return null; } };
+const IOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const ANDROID = /Android/i.test(navigator.userAgent);
+const PERFIL = 'https://www.instagram.com/achieverslab.col/';
+// Abre Instagram directo en la cámara de historias; si no está la app, el perfil de Achievers.
+function abrirInstagram() {
+  if (ANDROID) { location.href = 'intent://story-camera#Intent;scheme=instagram;package=com.instagram.android;S.browser_fallback_url=' + encodeURIComponent(PERFIL) + ';end'; return; }
+  if (IOS) {
+    const t = setTimeout(() => { if (!document.hidden) location.href = PERFIL; }, 1800);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) clearTimeout(t); }, { once: true });
+    location.href = 'instagram://story-camera'; return;
+  }
+  window.open(PERFIL, '_blank');
+}
 
 async function rpc(fn, args) {
   const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, { method: 'POST', headers: { ...H, 'Content-Type': 'application/json' }, body: JSON.stringify(args) });
@@ -211,23 +226,28 @@ $('foto').addEventListener('change', async () => {
   const f = $('foto').files[0]; if (!f) return;
   $('sFoto').textContent = 'Preparando tu foto…';
   try {
-    archivo = await enmarcar(f); subida = null;
+    archivo = await enmarcar(f);
     $('vista').src = URL.createObjectURL(archivo);
     $('cam').classList.add('oculto'); $('conFoto').classList.remove('oculto'); $('sFoto').textContent = '';
+    subirFoto();
   } catch (e) { $('sFoto').textContent = 'No pudimos abrir esa foto. Prueba con otra.'; }
   $('foto').value = '';
 });
 $('otra').addEventListener('click', () => $('foto').click());
 
-// Sube la foto y marca la asistencia (una sola vez por foto)
-function marcar(compartio) {
-  if (!subida) subida = (async () => {
-    const ruta = `${id}/${Date.now()}.jpg`;
-    const r = await fetch(`${SUPABASE_URL}/storage/v1/object/lastdance/${ruta}`, { method: 'POST', headers: { ...H, 'Content-Type': 'image/jpeg' }, body: archivo });
+// La foto se sube apenas se elige; los botones esperan a que termine.
+let ruta = null;
+function botones(on, txt) { ['bIg', 'bSolo'].forEach(b => $(b).disabled = !on); $('sFoto').textContent = txt || ''; }
+function subirFoto() {
+  const esta = archivo; ruta = null; botones(false, 'Subiendo tu foto…');
+  subida = (async () => {
+    const r0 = `${id}/${Date.now()}.jpg`;
+    const r = await fetch(`${SUPABASE_URL}/storage/v1/object/lastdance/${r0}`, { method: 'POST', headers: { ...H, 'Content-Type': 'image/jpeg' }, body: esta });
     if (!r.ok) throw new Error(await r.text());
-    return rpc('lastdance_marcar', { p_id: id, p_foto: ruta, p_compartio: false });
+    return r0;
   })();
-  return subida.then(n => compartio ? rpc('lastdance_marcar', { p_id: id, p_foto: null, p_compartio: true }) : n);
+  subida.then(r0 => { if (esta === archivo) { ruta = r0; botones(true); } })
+        .catch(() => { if (esta === archivo) { subida = null; $('sFoto').innerHTML = 'No se pudo subir la foto. <button class="cambiar" type="button" onclick="subirFoto()">Reintentar</button>'; } });
 }
 function terminar(n) {
   guardar('listo', '1'); $('nomFin').textContent = primerNombre();
@@ -235,40 +255,40 @@ function terminar(n) {
   mostrar('p3');
 }
 function copiarTexto() { try { navigator.clipboard.writeText(TEXTO).catch(() => {}); } catch (e) {} }
+const conteo = () => rpc('lastdance_conteo', {}).then(n => { $('num').textContent = '#' + n; $('cuantos').textContent = `Ya van ${n} asistencias hoy.`; }).catch(() => {});
 
-async function publicar(desdeFinal) {
+// Publicar: marca la asistencia (keepalive, sobrevive al salto de app) y abre Instagram en el mismo toque.
+$('bIg').addEventListener('click', () => {
+  if (!ruta) return;
   copiarTexto();
-  const pendiente = desdeFinal ? null : marcar(false).catch(e => { subida = null; throw e; });
-  let compartio = false;
-  if (archivo && navigator.canShare && navigator.canShare({ files: [archivo] })) {
-    try { await navigator.share({ files: [archivo], text: TEXTO }); compartio = true; } catch (e) {}
-  } else {
-    // Sin menú de compartir: bajar la foto y abrir Instagram
-    if (archivo) { const a = document.createElement('a'); a.href = URL.createObjectURL(archivo); a.download = archivo.name; a.click(); }
-    setTimeout(() => { location.href = 'https://www.instagram.com/'; }, 600); compartio = true;
-  }
-  if (desdeFinal) { if (compartio) rpc('lastdance_marcar', { p_id: id, p_foto: null, p_compartio: true }).catch(() => {}); return; }
-  $('sFoto').textContent = 'Marcando tu asistencia…';
-  try { await pendiente; const n = compartio ? await marcar(true) : await subida; terminar(n); }
-  catch (e) { $('sFoto').textContent = 'No se pudo subir la foto. Revisa tu internet y vuelve a tocar el botón.'; }
-}
-$('bIg').addEventListener('click', () => publicar(false));
-$('bIg2').addEventListener('click', () => publicar(true));
-$('bSolo').addEventListener('click', async () => {
-  $('bSolo').disabled = true; $('sFoto').textContent = 'Marcando tu asistencia…';
-  try { terminar(await marcar(false)); } catch (e) { subida = null; $('sFoto').textContent = 'No se pudo subir la foto. Revisa tu internet y vuelve a intentarlo.'; }
-  $('bSolo').disabled = false;
+  fetch(`${SUPABASE_URL}/rest/v1/rpc/lastdance_marcar`, { method: 'POST', keepalive: true,
+    headers: { ...H, 'Content-Type': 'application/json' }, body: JSON.stringify({ p_id: id, p_foto: ruta, p_compartio: true }) })
+    .then(r => r.json()).then(n => terminar(n)).catch(() => {});
+  terminar(); abrirInstagram();
 });
-
+$('bIg2').addEventListener('click', () => { copiarTexto(); abrirInstagram(); });
+document.addEventListener('visibilitychange', () => { if (!document.hidden && !$('p3').classList.contains('oculto')) conteo(); });
+$('bSolo').addEventListener('click', async () => {
+  if (!ruta) return;
+  botones(false, 'Marcando tu asistencia…');
+  try { terminar(await rpc('lastdance_marcar', { p_id: id, p_foto: ruta, p_compartio: false })); }
+  catch (e) { botones(true, 'No se pudo marcar. Revisa tu internet y vuelve a intentarlo.'); }
+});
+$('bGuardar').addEventListener('click', () => {
+  if (!archivo) return;
+  if (IOS) { $('tipIos').classList.remove('oculto'); $('vista').scrollIntoView({ behavior: 'smooth' }); return; }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(archivo); a.download = archivo.name; document.body.appendChild(a); a.click(); a.remove();
+  $('sFoto').textContent = 'Foto guardada en tu celular (Descargas).';
+});
 $('otraPersona').addEventListener('click', () => {
-  try { ['id', 'nombre', 'listo'].forEach(k => localStorage.removeItem('ld_' + k)); } catch (e) {}
+  try { ['id', 'nombre', 'listo'].forEach(k => localStorage.removeItem('ld2_' + k)); } catch (e) {}
   location.reload();
 });
 
 // Si vuelve a abrir el link
 if (id && nombre) {
   $('hola').textContent = `${primerNombre()}, tómate una foto aquí`;
-  if (leer('listo')) { $('nomFin').textContent = primerNombre(); $('bIg2').classList.add('oculto'); mostrar('p3'); rpc('lastdance_conteo', {}).then(n => $('cuantos').textContent = `Ya van ${n} asistencias hoy.`).catch(() => {}); }
+  if (leer('listo')) { $('nomFin').textContent = primerNombre(); mostrar('p3'); conteo(); }
   else mostrar('p2');
 }
 </script>
