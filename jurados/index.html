@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calificación del jurado · Achievers Lab</title>
+<meta name="description" content="Califica de 0 a 5 cada grupo que se presenta.">
+<meta name="theme-color" content="#0B2654">
+<link rel="icon" href="../logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --noche:#0B2654; --morado:#762DA6; --marfil:#FBF9FD; --turquesa:#5CD9DA; --amarillo:#FECE27;
+    --texto:#1d2433; --suave:#5b6478; --borde:#d9d3e6; --error:#c0392b; --ok:#1e8e5a; }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--marfil); color: var(--texto); font: 18px/1.5 "DM Sans", system-ui, sans-serif; }
+  h1, h2, h3 { font-family: Poppins, sans-serif; color: var(--noche); line-height: 1.12; margin: 0; text-wrap: balance; }
+  .wrap { max-width: 560px; margin: 0 auto; padding: 18px 16px 48px; }
+  .top { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .top img { width: 34px; }
+  .top span { font: 700 16px Poppins, sans-serif; color: var(--noche); }
+  .hero { position: relative; overflow: hidden; border-radius: 24px; padding: 26px 22px 24px; color: var(--marfil); background: var(--noche); box-shadow: 0 14px 30px rgba(11,38,84,.25); }
+  .hero::before { content: ""; position: absolute; width: 240px; height: 240px; border-radius: 50%; background: var(--morado); right: -90px; top: -110px; }
+  .hero::after { content: ""; position: absolute; width: 64px; height: 64px; border-radius: 50%; background: var(--turquesa); right: 30px; bottom: -24px; }
+  .hero > * { position: relative; }
+  .chip { display: inline-block; background: var(--amarillo); color: var(--noche); font: 800 13px Poppins, sans-serif; letter-spacing: .05em; text-transform: uppercase; border-radius: 999px; padding: 5px 12px; }
+  .hero h1 { color: var(--marfil); font-size: clamp(32px, 9vw, 44px); font-weight: 800; margin: 12px 0 6px; }
+  .hero p { margin: 8px 0 0; font-size: 17.5px; }
+  .hero p b { color: var(--amarillo); }
+  .tarjeta { background: #fff; border: 1px solid var(--borde); border-radius: 20px; padding: 22px 18px; margin-top: 18px; }
+  h2 { font-size: 25px; margin-bottom: 8px; }
+  .sub { color: var(--suave); margin: 0 0 14px; font-size: 17px; }
+  label { display: block; font-weight: 700; margin: 10px 0 6px; }
+  input[type=text] { width: 100%; font: 19px "DM Sans", sans-serif; padding: 14px 16px; border: 2px solid var(--borde); border-radius: 14px; background: var(--marfil); color: var(--texto); }
+  input[type=text]:focus { outline: none; border-color: var(--morado); background: #fff; }
+  .mal input { border-color: var(--error); }
+  .err { color: var(--error); font-size: 15px; margin-top: 6px; min-height: 1em; }
+  .btn { display: flex; align-items: center; justify-content: center; width: 100%; border: 0; border-radius: 999px; padding: 17px 20px; margin-top: 16px; cursor: pointer; font: 800 18px Poppins, sans-serif; color: #fff; background: var(--morado); box-shadow: 0 6px 0 #521d76; }
+  .btn:active { transform: translateY(3px); box-shadow: 0 3px 0 #521d76; }
+  .btn[disabled] { background: #e7e3ee; color: #9a93a8; box-shadow: none; }
+  .estado { text-align: center; color: var(--suave); font-size: 15px; margin-top: 10px; min-height: 1.2em; }
+  .quien { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .quien b { font: 800 20px Poppins, sans-serif; color: var(--noche); }
+  .enlace { background: none; border: 0; color: var(--morado); font: 700 15px "DM Sans", sans-serif; text-decoration: underline; cursor: pointer; padding: 4px 0; }
+  .avance { margin-top: 8px; font-weight: 700; color: var(--morado); }
+  .barra { height: 8px; border-radius: 8px; background: #eee8f5; margin-top: 6px; overflow: hidden; }
+  .barra i { display: block; height: 100%; width: 0; background: var(--turquesa); transition: width .3s; }
+  .grupo { background: #fff; border: 2px solid var(--borde); border-radius: 18px; padding: 14px 14px 12px; margin-top: 12px; }
+  .grupo.hecho { border-color: var(--turquesa); background: #f2fcfc; }
+  .gcab { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .gcab h3 { font-size: 21px; }
+  .gest { font-size: 15px; font-weight: 700; color: var(--suave); }
+  .hecho .gest { color: var(--ok); }
+  .notas { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+  .medias { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin: 6px 8.33% 0; }
+  .nota { border: 2px solid var(--borde); background: var(--marfil); border-radius: 12px; padding: 10px 0; font: 800 19px Poppins, sans-serif; color: var(--noche); cursor: pointer; min-width: 0; }
+  .medias .nota { font-size: 15px; padding: 7px 0; }
+  .nota.sel { background: var(--morado); border-color: var(--morado); color: #fff; }
+  .nota:disabled { opacity: .6; }
+  .oculto { display: none !important; }
+  footer { text-align: center; color: var(--suave); font-size: 14px; margin-top: 26px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><img src="../logo.png" alt=""><span>Achievers Lab</span></div>
+  <section class="hero">
+    <span class="chip">Jurado</span>
+    <h1>Califica cada grupo</h1>
+    <p>Toca la nota de <b>0 a 5</b> de cada grupo. Se guarda sola y la puedes cambiar cuando quieras.</p>
+  </section>
+
+  <section class="tarjeta" id="p1">
+    <h2>¿Quién califica?</h2>
+    <p class="sub">Tu nombre queda guardado con cada nota.</p>
+    <form id="fJurado" novalidate>
+      <div id="cJurado">
+        <label for="jurado">Nombre del jurado</label>
+        <input type="text" id="jurado" autocomplete="name" maxlength="80" placeholder="Ej.: Laura Gómez">
+        <div class="err" id="eJurado"></div>
+      </div>
+      <button class="btn" id="bJurado" type="submit">Empezar a calificar</button>
+      <div class="estado" id="sJurado"></div>
+    </form>
+  </section>
+
+  <section class="tarjeta oculto" id="p2">
+    <div class="quien"><span>Jurado: <b id="nomJ"></b></span><button class="enlace" id="cambiar" type="button">No soy yo</button></div>
+    <div class="avance" id="avance"></div>
+    <div class="barra"><i id="barra"></i></div>
+    <div id="grupos"></div>
+  </section>
+
+  <footer>Achievers Lab · empresa social y tecnológica fundada en 2024</footer>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://uvodcmmehtghkbwadzlq.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_CLYuajCg_s7EcEQDBkKyNQ__j2Wg_t3';
+const H = { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' };
+const N_GRUPOS = 8;
+const $ = id => document.getElementById(id);
+const leer = k => { try { return localStorage.getItem('jur_' + k); } catch (e) { return null; } };
+const guardar = (k, v) => { try { v == null ? localStorage.removeItem('jur_' + k) : localStorage.setItem('jur_' + k, v); } catch (e) {} };
+async function rpc(fn, args) {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, { method: 'POST', headers: H, body: JSON.stringify(args) });
+  if (!r.ok) throw new Error(await r.text());
+  const t = await r.text(); return t ? JSON.parse(t) : null;
+}
+const fmt = n => String(n).replace('.', ',');
+let jurado = leer('nombre') || '';
+const notas = {};
+
+function pintarAvance() {
+  const n = Object.keys(notas).length;
+  $('avance').textContent = `Calificaste ${n} de ${N_GRUPOS} grupos`;
+  $('barra').style.width = (n / N_GRUPOS * 100) + '%';
+}
+function armarGrupos() {
+  const c = $('grupos'); c.innerHTML = '';
+  for (let g = 1; g <= N_GRUPOS; g++) {
+    const d = document.createElement('div'); d.className = 'grupo'; d.id = 'g' + g;
+    const enteros = [0, 1, 2, 3, 4, 5].map(v => `<button class="nota" type="button" data-g="${g}" data-v="${v}">${v}</button>`).join('');
+    const medias = [0.5, 1.5, 2.5, 3.5, 4.5].map(v => `<button class="nota" type="button" data-g="${g}" data-v="${v}">${fmt(v)}</button>`).join('');
+    d.innerHTML = `<div class="gcab"><h3>Grupo ${g}</h3><span class="gest" id="e${g}">Sin calificar</span></div>
+      <div class="notas">${enteros}</div><div class="medias">${medias}</div>`;
+    c.appendChild(d);
+  }
+  c.addEventListener('click', async ev => {
+    const b = ev.target.closest('.nota'); if (!b) return;
+    const g = +b.dataset.g, v = +b.dataset.v;
+    const caja = $('g' + g), est = $('e' + g);
+    caja.querySelectorAll('.nota').forEach(x => x.classList.toggle('sel', x === b));
+    est.textContent = 'Guardando…';
+    try {
+      await rpc('jurado_calificar', { p_jurado: jurado, p_grupo: g, p_nota: v });
+      notas[g] = v; caja.classList.add('hecho'); est.textContent = `✓ Guardado: ${fmt(v)}`; pintarAvance();
+    } catch (e) {
+      est.textContent = 'No se guardó. Toca otra vez.';
+      if (notas[g] != null) caja.querySelectorAll('.nota').forEach(x => x.classList.toggle('sel', +x.dataset.v === notas[g]));
+      else b.classList.remove('sel');
+    }
+  });
+}
+function marcar(g, v) {
+  notas[g] = v; const caja = $('g' + g); if (!caja) return;
+  caja.classList.add('hecho'); $('e' + g).textContent = `✓ Guardado: ${fmt(v)}`;
+  caja.querySelectorAll('.nota').forEach(x => x.classList.toggle('sel', +x.dataset.v === v));
+}
+async function entrar() {
+  $('nomJ').textContent = jurado; $('p1').classList.add('oculto'); $('p2').classList.remove('oculto');
+  armarGrupos(); pintarAvance();
+  try { (await rpc('jurado_mis_notas', { p_jurado: jurado }) || []).forEach(r => marcar(r.grupo, +r.nota)); pintarAvance(); } catch (e) {}
+}
+$('fJurado').addEventListener('submit', e => {
+  e.preventDefault();
+  const n = $('jurado').value.trim().replace(/\s+/g, ' ');
+  if (n.length < 3) { $('cJurado').classList.add('mal'); $('eJurado').textContent = 'Escribe tu nombre.'; return; }
+  $('cJurado').classList.remove('mal'); $('eJurado').textContent = '';
+  jurado = n; guardar('nombre', n); entrar();
+});
+$('cambiar').addEventListener('click', () => { guardar('nombre', null); location.reload(); });
+if (jurado) entrar();
+</script>
+</body>
+</html>
