@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Last Dance · Achievers Lab</title>
+<meta name="description" content="Marca tu asistencia a The Last Dance de Achievers Lab con una foto en Rancho Aparte.">
+<meta name="theme-color" content="#0B2654">
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --noche:#0B2654; --morado:#762DA6; --marfil:#FBF9FD; --turquesa:#5CD9DA; --amarillo:#FECE27;
+    --texto:#1d2433; --suave:#5b6478; --borde:#d9d3e6; --error:#c0392b; }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--marfil); color: var(--texto); font: 18px/1.5 "DM Sans", Inter, system-ui, sans-serif; }
+  h1, h2 { font-family: Poppins, Montserrat, sans-serif; color: var(--noche); line-height: 1.12; margin: 0; text-wrap: balance; }
+  .wrap { max-width: 560px; margin: 0 auto; padding: 18px 16px 48px; }
+  .top { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .top img { width: 34px; }
+  .top span { font: 700 16px Poppins, sans-serif; color: var(--noche); }
+
+  .hero { position: relative; overflow: hidden; border-radius: 24px; padding: 28px 22px 26px; color: var(--marfil);
+    background: var(--noche); box-shadow: 0 14px 30px rgba(11,38,84,.25); }
+  .hero::before { content: ""; position: absolute; width: 260px; height: 260px; border-radius: 50%; background: var(--morado); right: -90px; top: -110px; }
+  .hero::after { content: ""; position: absolute; width: 70px; height: 70px; border-radius: 50%; background: var(--turquesa); right: 34px; bottom: -26px; }
+  .hero > * { position: relative; }
+  .chip { display: inline-block; background: var(--amarillo); color: var(--noche); font: 800 13px Poppins, sans-serif;
+    letter-spacing: .05em; text-transform: uppercase; border-radius: 999px; padding: 5px 12px; }
+  .hero h1 { color: var(--marfil); font-size: clamp(38px, 11vw, 54px); font-weight: 800; margin: 12px 0 6px; }
+  .hero .lugar { font-weight: 700; color: var(--turquesa); font-size: 19px; }
+  .hero p { margin: 12px 0 0; font-size: 18px; }
+
+  .tarjeta { background: #fff; border: 1px solid var(--borde); border-radius: 20px; padding: 22px 18px; margin-top: 18px; }
+  .paso { font: 700 13px "DM Sans", sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--morado); margin-bottom: 4px; }
+  h2 { font-size: 25px; margin-bottom: 8px; }
+  .sub { color: var(--suave); margin: 0 0 16px; font-size: 17px; }
+  label { display: block; font-weight: 700; margin: 14px 0 6px; }
+  label small { font-weight: 400; color: var(--suave); }
+  input[type=text] { width: 100%; font: 19px "DM Sans", sans-serif; padding: 14px 16px; border: 2px solid var(--borde);
+    border-radius: 14px; background: var(--marfil); color: var(--texto); }
+  input[type=text]:focus { outline: none; border-color: var(--morado); background: #fff; }
+  .mal input { border-color: var(--error); }
+  .err { color: var(--error); font-size: 15px; margin-top: 6px; min-height: 1em; }
+
+  .btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; border: 0; border-radius: 999px;
+    padding: 17px 20px; margin-top: 18px; cursor: pointer; font: 800 18px Poppins, sans-serif; text-decoration: none;
+    color: #fff; background: var(--morado); box-shadow: 0 6px 0 #521d76; }
+  .btn:active { transform: translateY(3px); box-shadow: 0 3px 0 #521d76; }
+  .btn[disabled] { background: #e7e3ee; color: #9a93a8; box-shadow: none; cursor: not-allowed; }
+  .btn.ig { background: linear-gradient(90deg, #f58529, #dd2a7b 45%, #8134af); box-shadow: 0 6px 0 #6a1f8c; }
+  .btn.claro { background: #fff; color: var(--noche); border: 2px solid var(--noche); box-shadow: none; margin-top: 12px; }
+  .btn svg { width: 24px; height: 24px; flex: 0 0 24px; }
+
+  .camara { display: grid; place-items: center; gap: 8px; text-align: center; border: 3px dashed var(--morado); border-radius: 18px;
+    padding: 30px 16px; cursor: pointer; background: #f6effb; color: var(--morado); font: 800 19px Poppins, sans-serif; }
+  .camara svg { width: 48px; height: 48px; }
+  .camara small { font: 500 15px "DM Sans", sans-serif; color: var(--suave); }
+  #vista { width: 100%; border-radius: 16px; display: block; box-shadow: 0 8px 20px rgba(11,38,84,.18); }
+  .cambiar { background: none; border: 0; color: var(--morado); font: 700 16px "DM Sans", sans-serif; text-decoration: underline; cursor: pointer; margin: 10px auto 0; display: block; }
+  .tips { margin: 16px 0 0; padding: 14px 16px; background: #e9fafa; border-radius: 14px; font-size: 16px; color: var(--noche); }
+  .tips b { font-weight: 700; }
+  .estado { text-align: center; color: var(--suave); font-size: 15px; margin-top: 12px; min-height: 1.2em; }
+
+  .listo { text-align: center; }
+  .listo .num { font: 800 64px/1 Poppins, sans-serif; color: var(--morado); margin: 8px 0 4px; }
+  .oculto { display: none !important; }
+  footer { text-align: center; color: var(--suave); font-size: 14px; margin-top: 26px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><img src="logo.png" alt=""><span>Achievers Lab</span></div>
+
+  <section class="hero">
+    <span class="chip">Hoy · 24 de noviembre</span>
+    <h1>The Last Dance</h1>
+    <div class="lugar">Rancho Aparte · Cl. 96 #13-40</div>
+    <p>Hoy no hay lista: tu asistencia es una foto tuya aquí, publicada en tu Instagram.</p>
+  </section>
+
+  <!-- Paso 1: nombre -->
+  <section class="tarjeta" id="p1">
+    <div class="paso">Paso 1 de 2</div>
+    <h2>¿Cómo te llamas?</h2>
+    <p class="sub">Así sabemos quién vino.</p>
+    <form id="fNombre" novalidate>
+      <div id="cNombre">
+        <label for="nombre">Nombre y apellido</label>
+        <input type="text" id="nombre" autocomplete="name" maxlength="120" placeholder="Ej.: Laura Gómez">
+        <div class="err" id="eNombre"></div>
+      </div>
+      <label for="ig">Tu usuario de Instagram <small>(opcional, para encontrar tu historia)</small></label>
+      <input type="text" id="ig" autocomplete="off" autocapitalize="none" maxlength="60" placeholder="@tu_usuario">
+      <button class="btn" id="bNombre" type="submit">Continuar</button>
+      <div class="estado" id="sNombre"></div>
+    </form>
+  </section>
+
+  <!-- Paso 2: foto y publicar -->
+  <section class="tarjeta oculto" id="p2">
+    <div class="paso">Paso 2 de 2</div>
+    <h2 id="hola">Tómate una foto aquí</h2>
+    <p class="sub">Tú (o tu equipo) en Rancho Aparte. Le ponemos el marco de The Last Dance.</p>
+
+    <label class="camara" id="cam">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="4"/></svg>
+      Tomar foto
+      <small>o elegir una de tu galería</small>
+      <input type="file" id="foto" accept="image/*" class="oculto">
+    </label>
+
+    <div id="conFoto" class="oculto">
+      <img id="vista" alt="Tu foto con el marco de The Last Dance">
+      <button class="cambiar" id="otra" type="button">Usar otra foto</button>
+      <button class="btn ig" id="bIg" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+        Publicar en Instagram
+      </button>
+      <button class="btn claro" id="bSolo" type="button">Solo marcar mi asistencia</button>
+      <div class="tips">En tu historia o post etiqueta a <b>@achieverslab.col</b>. El texto ya queda copiado: solo pégalo.</div>
+    </div>
+    <div class="estado" id="sFoto"></div>
+  </section>
+
+  <!-- Listo -->
+  <section class="tarjeta listo oculto" id="p3">
+    <div class="paso">Asistencia marcada</div>
+    <h2>¡Gracias por venir, <span id="nomFin"></span>!</h2>
+    <div class="num" id="num">✓</div>
+    <p class="sub" id="cuantos">Ya quedaste en la lista de hoy.</p>
+    <button class="btn ig" id="bIg2" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+      Publicar en Instagram
+    </button>
+    <a class="btn claro" href="https://www.instagram.com/achieverslab.col/">Ir a @achieverslab.col</a>
+  </section>
+
+  <footer>Achievers Lab · empresa social y tecnológica fundada en 2024</footer>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://uvodcmmehtghkbwadzlq.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_CLYuajCg_s7EcEQDBkKyNQ__j2Wg_t3';
+const TEXTO = 'The Last Dance con @achieverslab.col en Rancho Aparte 💃🕺 #TheLastDance #AchieversLab';
+const H = { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + SUPABASE_KEY };
+const $ = id => document.getElementById(id);
+const guardar = (k, v) => { try { localStorage.setItem('ld_' + k, v); } catch (e) {} };
+const leer = k => { try { return localStorage.getItem('ld_' + k); } catch (e) { return null; } };
+
+async function rpc(fn, args) {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, { method: 'POST', headers: { ...H, 'Content-Type': 'application/json' }, body: JSON.stringify(args) });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+let id = leer('id'), nombre = leer('nombre') || '', archivo = null, subida = null;
+const primerNombre = () => nombre.split(' ')[0];
+function mostrar(p) { ['p1', 'p2', 'p3'].forEach(x => $(x).classList.toggle('oculto', x !== p)); window.scrollTo(0, p === 'p1' ? 0 : $(p).offsetTop - 12); }
+
+// Paso 1
+$('fNombre').addEventListener('submit', async e => {
+  e.preventDefault();
+  const n = $('nombre').value.trim().replace(/\s+/g, ' ');
+  if (n.length < 3 || !n.includes(' ')) { $('cNombre').classList.add('mal'); $('eNombre').textContent = 'Escribe tu nombre y tu apellido.'; return; }
+  $('cNombre').classList.remove('mal'); $('eNombre').textContent = '';
+  $('bNombre').disabled = true; $('sNombre').textContent = 'Guardando…';
+  try {
+    id = await rpc('lastdance_registrar', { p_nombre: n, p_instagram: $('ig').value.trim() || null });
+    nombre = n; guardar('id', id); guardar('nombre', n);
+    $('hola').textContent = `${primerNombre()}, tómate una foto aquí`;
+    mostrar('p2');
+  } catch (err) { $('sNombre').textContent = 'No se pudo guardar. Revisa tu internet e inténtalo otra vez.'; }
+  $('bNombre').disabled = false; if (id) $('sNombre').textContent = '';
+});
+
+// Foto con marco 1080×1350
+const logo = new Image(); logo.src = 'logo.png';
+function cargarImagen(file) {
+  return new Promise((ok, mal) => { const u = URL.createObjectURL(file), im = new Image();
+    im.onload = () => ok(im); im.onerror = mal; im.src = u; });
+}
+async function enmarcar(file) {
+  await document.fonts.ready;
+  const im = await cargarImagen(file);
+  const W = 1080, Hh = 1350, F = 1150, c = document.createElement('canvas'); c.width = W; c.height = Hh;
+  const g = c.getContext('2d');
+  g.fillStyle = '#0B2654'; g.fillRect(0, 0, W, Hh);
+  const s = Math.max(W / im.naturalWidth, F / im.naturalHeight), w = im.naturalWidth * s, h = im.naturalHeight * s;
+  g.save(); g.beginPath(); g.rect(0, 0, W, F); g.clip(); g.drawImage(im, (W - w) / 2, (F - h) / 2, w, h); g.restore();
+  // círculos de firma
+  g.fillStyle = '#762DA6'; g.beginPath(); g.arc(W - 40, F + 40, 150, 0, 7); g.fill();
+  g.fillStyle = '#5CD9DA'; g.beginPath(); g.arc(W - 210, Hh - 8, 34, 0, 7); g.fill();
+  // placa marfil con logo
+  g.fillStyle = '#FBF9FD'; g.beginPath(); g.roundRect(40, F + 38, 104, 124, 22); g.fill();
+  if (logo.complete && logo.naturalWidth) { const lh = 100, lw = logo.naturalWidth * lh / logo.naturalHeight; g.drawImage(logo, 40 + (104 - lw) / 2, F + 50, lw, lh); }
+  g.fillStyle = '#FECE27'; g.font = '800 64px Poppins, sans-serif'; g.fillText('The Last Dance', 170, F + 98);
+  g.fillStyle = '#FBF9FD'; g.font = '700 32px "DM Sans", sans-serif'; g.fillText('Achievers Lab · Rancho Aparte · 24 nov 2026', 170, F + 148);
+  // etiqueta sobre la foto
+  g.font = '700 30px "DM Sans", sans-serif'; const t = '@achieverslab.col', tw = g.measureText(t).width;
+  g.fillStyle = 'rgba(11,38,84,.82)'; g.beginPath(); g.roundRect(36, 36, tw + 44, 58, 29); g.fill();
+  g.fillStyle = '#FBF9FD'; g.fillText(t, 58, 76);
+  const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.86));
+  return new File([blob], 'the-last-dance-achievers.jpg', { type: 'image/jpeg' });
+}
+
+$('foto').addEventListener('change', async () => {
+  const f = $('foto').files[0]; if (!f) return;
+  $('sFoto').textContent = 'Preparando tu foto…';
+  try {
+    archivo = await enmarcar(f); subida = null;
+    $('vista').src = URL.createObjectURL(archivo);
+    $('cam').classList.add('oculto'); $('conFoto').classList.remove('oculto'); $('sFoto').textContent = '';
+  } catch (e) { $('sFoto').textContent = 'No pudimos abrir esa foto. Prueba con otra.'; }
+  $('foto').value = '';
+});
+$('otra').addEventListener('click', () => $('foto').click());
+
+// Sube la foto y marca la asistencia (una sola vez por foto)
+function marcar(compartio) {
+  if (!subida) subida = (async () => {
+    const ruta = `${id}/${Date.now()}.jpg`;
+    const r = await fetch(`${SUPABASE_URL}/storage/v1/object/lastdance/${ruta}`, { method: 'POST', headers: { ...H, 'Content-Type': 'image/jpeg' }, body: archivo });
+    if (!r.ok) throw new Error(await r.text());
+    return rpc('lastdance_marcar', { p_id: id, p_foto: ruta, p_compartio: false });
+  })();
+  return subida.then(n => compartio ? rpc('lastdance_marcar', { p_id: id, p_foto: null, p_compartio: true }) : n);
+}
+function terminar(n) {
+  guardar('listo', '1'); $('nomFin').textContent = primerNombre();
+  if (typeof n === 'number') { $('num').textContent = '#' + n; $('cuantos').textContent = `Eres la asistencia número ${n} de hoy.`; }
+  mostrar('p3');
+}
+function copiarTexto() { try { navigator.clipboard.writeText(TEXTO).catch(() => {}); } catch (e) {} }
+
+async function publicar(desdeFinal) {
+  copiarTexto();
+  const pendiente = desdeFinal ? null : marcar(false).catch(e => { subida = null; throw e; });
+  let compartio = false;
+  if (archivo && navigator.canShare && navigator.canShare({ files: [archivo] })) {
+    try { await navigator.share({ files: [archivo], text: TEXTO }); compartio = true; } catch (e) {}
+  } else {
+    // Sin menú de compartir: bajar la foto y abrir Instagram
+    if (archivo) { const a = document.createElement('a'); a.href = URL.createObjectURL(archivo); a.download = archivo.name; a.click(); }
+    setTimeout(() => { location.href = 'https://www.instagram.com/'; }, 600); compartio = true;
+  }
+  if (desdeFinal) { if (compartio) rpc('lastdance_marcar', { p_id: id, p_foto: null, p_compartio: true }).catch(() => {}); return; }
+  $('sFoto').textContent = 'Marcando tu asistencia…';
+  try { await pendiente; const n = compartio ? await marcar(true) : await subida; terminar(n); }
+  catch (e) { $('sFoto').textContent = 'No se pudo subir la foto. Revisa tu internet y vuelve a tocar el botón.'; }
+}
+$('bIg').addEventListener('click', () => publicar(false));
+$('bIg2').addEventListener('click', () => publicar(true));
+$('bSolo').addEventListener('click', async () => {
+  $('bSolo').disabled = true; $('sFoto').textContent = 'Marcando tu asistencia…';
+  try { terminar(await marcar(false)); } catch (e) { subida = null; $('sFoto').textContent = 'No se pudo subir la foto. Revisa tu internet y vuelve a intentarlo.'; }
+  $('bSolo').disabled = false;
+});
+
+// Si vuelve a abrir el link
+if (id && nombre) {
+  $('hola').textContent = `${primerNombre()}, tómate una foto aquí`;
+  if (leer('listo')) { $('nomFin').textContent = primerNombre(); $('bIg2').classList.add('oculto'); mostrar('p3'); rpc('lastdance_conteo', {}).then(n => $('cuantos').textContent = `Ya van ${n} asistencias hoy.`).catch(() => {}); }
+  else mostrar('p2');
+}
+</script>
+</body>
+</html>
